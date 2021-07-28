@@ -1,0 +1,35 @@
+
+plugins {
+    id("org.jetbrains.kotlin.jvm")
+}
+
+repositories {
+    mavenCentral()
+}
+
+java {
+    sourceCompatibility = JavaVersion.toVersion("11")
+}
+
+tasks {
+    compileJava {
+        options.compilerArgs.add("-parameters")
+    }
+
+    compileKotlin {
+        kotlinOptions {
+            jvmTarget = "11"
+        }
+    }
+    compileTestKotlin {
+        kotlinOptions {
+            jvmTarget = "11"
+            javaParameters = true
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
