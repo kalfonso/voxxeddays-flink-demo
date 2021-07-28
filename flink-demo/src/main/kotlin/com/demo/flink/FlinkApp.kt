@@ -14,7 +14,7 @@ fun main() {
   source.setStartFromEarliest()
   source.assignTimestampsAndWatermarks(
     WatermarkStrategy
-      .forBoundedOutOfOrderness<ReceiverRecord<LedgerEvent>>(Duration.ofHours(2))
+      .forBoundedOutOfOrderness<LedgerEvent>(Duration.ofHours(2))
       .withTimestampAssigner { x, _ -> x.data.occurred_at }
   )
   val sink = KafkaSink.create<TestBankSettlementEvent>("bank_settlement_events")
@@ -23,8 +23,8 @@ fun main() {
 }
 
 class FlinkExemplarApp(
-  private val source: SourceFunction<ReceiverRecord<LedgerEvent>>,
-  private val sink: SinkFunction<PublisherRecord<TestBankSettlementEvent>>
+  private val source: SourceFunction<LedgerEvent>,
+  private val sink: SinkFunction<TestBankSettlementEvent>
 ) {
   fun execute() {
     val env = StreamExecutionEnvironment.getExecutionEnvironment()

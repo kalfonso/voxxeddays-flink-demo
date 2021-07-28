@@ -9,5 +9,7 @@ object Dependencies {
   val ktlintVersion = "0.40.0"
   val shadowJarPlugin = "com.github.jengelman.gradle.plugins:shadow:6.1.0"
   val spotlessPlugin = "com.diffplug.spotless:spotless-plugin-gradle:4.5.1"
+  val flinkJava = "org.apache.flink:flink-java:1.13.1"
+  val flinkStreamingJava = "org.apache.flink:flink-streaming-java_2.12:1.13.1"
 }
 

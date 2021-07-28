@@ -6,6 +6,8 @@ plugins {
 
 dependencies {
   implementation(project(":protos"))
+  implementation(Dependencies.flinkJava)
+  implementation(Dependencies.flinkStreamingJava)
 
   testImplementation(Dependencies.junitApi)
   testImplementation(Dependencies.assertk)
