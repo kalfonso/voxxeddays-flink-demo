@@ -8,6 +8,7 @@ dependencies {
   implementation(project(":protos"))
   implementation(Dependencies.flinkJava)
   implementation(Dependencies.flinkStreamingJava)
+  implementation(Dependencies.protobuf)
 
   testImplementation(Dependencies.junitApi)
   testImplementation(Dependencies.assertk)

@@ -11,5 +11,6 @@ object Dependencies {
   val spotlessPlugin = "com.diffplug.spotless:spotless-plugin-gradle:4.5.1"
   val flinkJava = "org.apache.flink:flink-java:1.13.1"
   val flinkStreamingJava = "org.apache.flink:flink-streaming-java_2.12:1.13.1"
+  val protobuf = "com.google.protobuf:protobuf-gradle-plugin:0.8.17"
 }
 
