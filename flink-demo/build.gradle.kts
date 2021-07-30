@@ -9,6 +9,8 @@ dependencies {
   implementation(Dependencies.flinkJava)
   implementation(Dependencies.flinkStreamingJava)
   implementation(Dependencies.protobuf)
+  implementation(Dependencies.flinkConnector)
+  implementation(Dependencies.flinkConnectorBase)
 
   testImplementation(Dependencies.junitApi)
   testImplementation(Dependencies.assertk)
