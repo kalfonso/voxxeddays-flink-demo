@@ -11,6 +11,7 @@ dependencies {
   implementation(Dependencies.protobuf)
   implementation(Dependencies.flinkConnector)
   implementation(Dependencies.flinkConnectorBase)
+  implementation(Dependencies.flinkCore)
 
   testImplementation(Dependencies.junitApi)
   testImplementation(Dependencies.assertk)

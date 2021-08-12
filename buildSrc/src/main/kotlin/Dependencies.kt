@@ -14,5 +14,6 @@ object Dependencies {
   val protobuf = "com.google.protobuf:protobuf-gradle-plugin:0.8.17"
   val flinkConnector = "org.apache.flink:flink-connector-kafka_2.11:1.13.0"
   val flinkConnectorBase = "org.apache.flink:flink-connector-base:1.13.0"
+  val flinkCore = "org.apache.flink:flink-core:1.13.1"
 }
 
