@@ -6,6 +6,7 @@ plugins {
 
 dependencies {
   implementation(project(":protos"))
+  implementation(Dependencies.protobufJavaUtil)
   implementation(Dependencies.flinkJava)
   implementation(Dependencies.flinkStreamingJava)
   implementation(Dependencies.protobuf)

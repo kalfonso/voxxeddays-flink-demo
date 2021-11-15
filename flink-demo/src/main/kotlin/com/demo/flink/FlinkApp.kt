@@ -1,5 +1,8 @@
 package com.demo.flink
 
+import com.demo.flink.Exemplar.TransactionEvent
+import com.demo.flink.serdes.TransactionEventDeserializationSchema
+import com.demo.flink.serdes.TransactionEventSerializationSchema
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.apache.flink.streaming.api.functions.sink.SinkFunction
@@ -11,26 +14,20 @@ import java.nio.charset.Charset
 import java.util.Properties
 
 fun main() {
-
   val props = Properties()
   props["bootstrap.servers"] = "localhost:9092"
   props["group.id"] = "flink-voxxeddays-demo"
 
   val source = FlinkKafkaConsumer(
-    "input-topic",
-    SimpleStringSchema(),
+    "transaction-events",
+    TransactionEventDeserializationSchema(),
     props
   )
 
-  val sink = FlinkKafkaProducer<String>(
-    "test-topic",
-    { value, timestamp ->
-      ProducerRecord(
-        "test-topic",
-        "myKey".toByteArray(Charset.defaultCharset()),
-        value.toByteArray(Charset.defaultCharset())
-      )
-    },
+  val sinkTopic = "fraudulent-transaction-events"
+  val sink = FlinkKafkaProducer(
+    sinkTopic,
+    TransactionEventSerializationSchema(sinkTopic),
     props,
     FlinkKafkaProducer.Semantic.EXACTLY_ONCE
   )
@@ -39,16 +36,17 @@ fun main() {
 }
 
 class FlinkExemplarApp(
-  private val source: SourceFunction<String>,
-  private val sink: SinkFunction<String>
+  private val source: SourceFunction<TransactionEvent>,
+  private val sink: SinkFunction<TransactionEvent>
 ) {
   fun execute() {
     val env = StreamExecutionEnvironment.getExecutionEnvironment()
 
     env.addSource(source)
-      .uid("ledger_events_source")
+      .uid("transaction_events_source")
       .addSink(sink)
+      .uid("fraudulent_events_sink")
 
-    env.execute("Funds Settlement App")
+    env.execute("Fraud Detection App")
   }
 }

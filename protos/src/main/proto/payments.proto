@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option java_package = "com.demo.flink";
+
+package com.demo.flink;
+
+message TransactionEvent {
+  // The sender customer ID
+  string senderToken = 1;
+
+  // The receiver customer ID
+  string receiverToken = 2;
+
+  // The aggregated settlement amount in cents
+  int64 amount = 3;
+
+  // The transaction timestamp in millis (Unix epoch)
+  int64 created_at = 4;
+}
