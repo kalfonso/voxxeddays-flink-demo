@@ -1,5 +1,9 @@
+import com.google.protobuf.gradle.builtins
+import com.google.protobuf.gradle.generateProtoTasks
+import com.google.protobuf.gradle.id
 import com.google.protobuf.gradle.protobuf
 import com.google.protobuf.gradle.protoc
+import flink_demo.Dependencies.protoc
 
 plugins {
     id("org.jetbrains.kotlin.jvm")
@@ -43,7 +47,15 @@ tasks.withType<Test>().configureEach {
 
 protobuf {
     protoc {
-        artifact = flink_demo.Dependencies.protoc
+        artifact = protoc
+    }
+
+    generateProtoTasks {
+        all().forEach { task ->
+            task.builtins {
+
+            }
+        }
     }
 }
 

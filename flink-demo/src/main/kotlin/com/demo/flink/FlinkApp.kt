@@ -1,16 +1,12 @@
 package com.demo.flink
 
-import com.demo.flink.Exemplar.TransactionEvent
 import com.demo.flink.serdes.TransactionEventDeserializationSchema
 import com.demo.flink.serdes.TransactionEventSerializationSchema
-import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.apache.flink.streaming.api.functions.sink.SinkFunction
 import org.apache.flink.streaming.api.functions.source.SourceFunction
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer
-import org.apache.kafka.clients.producer.ProducerRecord
-import java.nio.charset.Charset
 import java.util.Properties
 
 fun main() {
@@ -23,6 +19,7 @@ fun main() {
     TransactionEventDeserializationSchema(),
     props
   )
+  source.setStartFromEarliest()
 
   val sinkTopic = "fraudulent-transaction-events"
   val sink = FlinkKafkaProducer(
@@ -36,8 +33,8 @@ fun main() {
 }
 
 class FlinkExemplarApp(
-  private val source: SourceFunction<TransactionEvent>,
-  private val sink: SinkFunction<TransactionEvent>
+  private val source: SourceFunction<Payments.TransactionEvent>,
+  private val sink: SinkFunction<Payments.TransactionEvent>
 ) {
   fun execute() {
     val env = StreamExecutionEnvironment.getExecutionEnvironment()

@@ -1,22 +1,23 @@
 package com.demo.flink.serdes
 
-import com.demo.flink.Exemplar.TransactionEvent
+import com.demo.flink.Payments
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.streaming.connectors.kafka.KafkaDeserializationSchema
 import org.apache.kafka.clients.consumer.ConsumerRecord
 
-class TransactionEventDeserializationSchema: KafkaDeserializationSchema<TransactionEvent> {
+class TransactionEventDeserializationSchema :
+  KafkaDeserializationSchema<Payments.TransactionEvent> {
   override fun deserialize(
     record: ConsumerRecord<ByteArray, ByteArray>
-  ): TransactionEvent {
-    return TransactionEvent.parseFrom(record.value())
+  ): Payments.TransactionEvent {
+    return Payments.TransactionEvent.parseFrom(record.value())
   }
 
-  override fun getProducedType(): TypeInformation<TransactionEvent> {
-    return TypeInformation.of(TransactionEvent::class.java)
+  override fun getProducedType(): TypeInformation<Payments.TransactionEvent> {
+    return TypeInformation.of(Payments.TransactionEvent::class.java)
   }
 
-  override fun isEndOfStream(event: TransactionEvent): Boolean {
+  override fun isEndOfStream(event: Payments.TransactionEvent): Boolean {
     return false
   }
 }

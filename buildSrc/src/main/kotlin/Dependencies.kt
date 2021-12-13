@@ -7,10 +7,10 @@ object Dependencies {
   val junitGradlePlugin = "org.junit.platform:junit-platform-gradle-plugin:1.2.0"
   val kotlinGradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.10"
   val ktlintVersion = "0.40.0"
-  val shadowJarPlugin = "com.github.jengelman.gradle.plugins:shadow:6.1.0"
   val spotlessPlugin = "com.diffplug.spotless:spotless-plugin-gradle:4.5.1"
   val flinkJava = "org.apache.flink:flink-java:1.13.1"
   val flinkStreamingJava = "org.apache.flink:flink-streaming-java_2.12:1.13.1"
+  val flinkClients = "org.apache.flink:flink-clients_2.12:1.13.1"
   val protobuf = "com.google.protobuf:protobuf-gradle-plugin:0.8.17"
   val flinkConnector = "org.apache.flink:flink-connector-kafka_2.11:1.13.0"
   val flinkConnectorBase = "org.apache.flink:flink-connector-base:1.13.0"
@@ -18,5 +18,6 @@ object Dependencies {
   val protobufGradlePlugin = "com.google.protobuf:protobuf-gradle-plugin:0.8.17"
   val protobufJavaUtil = "com.google.protobuf:protobuf-java-util:3.17.3"
   val protoc = "com.google.protobuf:protoc:3.17.3"
+  val kafkaTools = "org.apache.kafka:kafka-tools:2.8.0"
 }
 
