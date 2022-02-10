@@ -1,5 +1,6 @@
 package com.demo.flink.load
 
+import com.demo.flink.Payments
 import org.apache.kafka.tools.ThroughputThrottler
 import org.slf4j.LoggerFactory
 import java.time.Instant
@@ -10,10 +11,12 @@ import kotlin.concurrent.thread
 import kotlin.random.Random
 import kotlin.random.nextLong
 
+// Publishes random payments to Kafka for testing purposes.
 class LoadGenerator(private val latch: CountDownLatch) {
-  private val numRecords: Long = 100
+  private val numPayments: Long = 10000
+  private val numCustomers: Long = 10
   private val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
-  private val amountRange = LongRange(1, 300)
+  private val amountRange = LongRange(1, 4000)
 
   private val throughput: Int = -1
 
@@ -24,33 +27,33 @@ class LoadGenerator(private val latch: CountDownLatch) {
     val throttler = ThroughputThrottler(throughput.toLong(), startMs)
 
     logger.info("Starting load testing")
-    logger.info("Generating $numRecords records with throughput $throughput msg/s")
+    logger.info("Generating $numPayments records with throughput $throughput msg/s")
     try {
-      for (i: Long in 1..numRecords) {
-        val event = randomTransactionEvent()
+      for (i: Long in 1..numPayments) {
+        val event = randomPaymentEvent()
         val sendStartMs = System.currentTimeMillis()
         publisher.publish(event)
-        logger.info("Published event for customer: ${event.senderToken}, amount: ${event.amount}")
+        logger.info("Published event for customer: ${event.senderID}, amount: ${event.amount}")
         if (throttler.shouldThrottle(i, sendStartMs)) {
           logger.info("Throttling message $i to achieve throughput $throughput")
           throttler.throttle()
         }
       }
-      logger.info("Published $numRecords events")
+      logger.info("Published $numPayments events")
     } finally {
       publisher.close()
       latch.countDown()
     }
   }
 
-  private fun randomTransactionEvent(): Payments {
-    return Payments.TransactionEvent.newBuilder()
-      .setSenderToken("S_${randomString(3)}")
-      .setReceiverToken("R_${randomString(3)}")
+  private fun randomPaymentEvent(): Payments.PaymentEvent {
+    return Payments.PaymentEvent.newBuilder()
+      .setSenderID("S_${Random.nextLong(0, numCustomers)}")
+      .setReceiverID("R_${Random.nextLong(0, numCustomers)}")
       .setAmount(Random.nextLong(amountRange))
       .setCreatedAt(
         randomDateBetween(
-          Instant.now().minus(1, ChronoUnit.MINUTES),
+          Instant.now().minus(3, ChronoUnit.HOURS),
           Instant.now()
         )
       )
@@ -71,10 +74,12 @@ class LoadGenerator(private val latch: CountDownLatch) {
     return Instant.ofEpochSecond(random).toEpochMilli()
   }
 
-  private fun createPublisher(): TestTransactionEventPublisher {
+  private fun createPublisher(): PaymentEventPublisher {
     val properties = Properties()
     properties["bootstrap.servers"] = "localhost:9092"
-    return TestTransactionEventPublisher(properties)
+    properties["batch.size"] = "0"
+    properties["request.required.acks"] = "1"
+    return PaymentEventPublisher(properties)
   }
 
   fun close() {

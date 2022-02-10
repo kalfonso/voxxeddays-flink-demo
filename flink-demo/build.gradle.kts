@@ -23,7 +23,7 @@ dependencies {
 }
 
 application {
-  mainClassName = "com.demo.flink.FlinkAppKt"
+  mainClass.set("com.demo.flink.FlinkAppKt")
 }
 
 
