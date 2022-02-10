@@ -4,16 +4,19 @@ option java_package = "com.demo.flink";
 
 package com.demo.flink;
 
-message TransactionEvent {
+message PaymentEvent {
+  // The payment identifier
+  string id = 1;
+
   // The sender customer ID
-  string senderToken = 1;
+  string senderID = 2;
 
   // The receiver customer ID
-  string receiverToken = 2;
+  string receiverID = 3;
 
   // The aggregated settlement amount in cents
-  int64 amount = 3;
+  int64 amount = 4;
 
   // The transaction timestamp in millis (Unix epoch)
-  int64 created_at = 4;
+  int64 created_at = 5;
 }

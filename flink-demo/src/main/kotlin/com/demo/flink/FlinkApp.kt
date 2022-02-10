@@ -1,10 +1,16 @@
 package com.demo.flink
 
-import com.demo.flink.serdes.TransactionEventDeserializationSchema
-import com.demo.flink.serdes.TransactionEventSerializationSchema
+import com.demo.flink.FraudulentPayments.FraudulentPaymentEvent
+import com.demo.flink.model.CustomerPayments
+import com.demo.flink.model.FraudulentPaymentsFunction
+import com.demo.flink.model.ToCustomerPaymentMapFunction
+import com.demo.flink.serdes.PaymentEventDeserializationSchema
+import com.demo.flink.serdes.FraudulentPaymentEventSerializationSchema
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.apache.flink.streaming.api.functions.sink.SinkFunction
 import org.apache.flink.streaming.api.functions.source.SourceFunction
+import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
+import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer
 import java.util.Properties
@@ -15,16 +21,16 @@ fun main() {
   props["group.id"] = "flink-voxxeddays-demo"
 
   val source = FlinkKafkaConsumer(
-    "transaction-events",
-    TransactionEventDeserializationSchema(),
+    "payment_events",
+    PaymentEventDeserializationSchema(),
     props
   )
   source.setStartFromEarliest()
 
-  val sinkTopic = "fraudulent-transaction-events"
+  val sinkTopic = "fraudulent_payment_events"
   val sink = FlinkKafkaProducer(
     sinkTopic,
-    TransactionEventSerializationSchema(sinkTopic),
+    FraudulentPaymentEventSerializationSchema(sinkTopic),
     props,
     FlinkKafkaProducer.Semantic.EXACTLY_ONCE
   )
@@ -33,17 +39,36 @@ fun main() {
 }
 
 class FlinkExemplarApp(
-  private val source: SourceFunction<Payments.TransactionEvent>,
-  private val sink: SinkFunction<Payments.TransactionEvent>
+  private val source: SourceFunction<Payments.PaymentEvent>,
+  private val sink: SinkFunction<FraudulentPaymentEvent>
 ) {
   fun execute() {
     val env = StreamExecutionEnvironment.getExecutionEnvironment()
 
     env.addSource(source)
-      .uid("transaction_events_source")
+      .uid("payment_events_source")
+      .map(ToCustomerPaymentMapFunction())
+      .keyBy { it.id }
+      .window(TumblingEventTimeWindows.of(Time.hours(1)))
+      .aggregate(FraudulentPaymentsFunction(maxCount = 3, maxAmount = 3000))
+      .uid("fraudulent_payments")
+      .filter { it.fraudulent }
+      .map { toFraudulentPayment(it) }
+      .uid("fraudulent_payments_events")
       .addSink(sink)
       .uid("fraudulent_events_sink")
 
     env.execute("Fraud Detection App")
+  }
+
+  private fun toFraudulentPayment(payments: CustomerPayments): FraudulentPaymentEvent {
+    return FraudulentPaymentEvent.newBuilder()
+      .setCustomerID(payments.id)
+      .setAmount(payments.amount)
+      .setCount(payments.count)
+      .setLocation(payments.location)
+      .setStartTime(payments.startTime)
+      .setEndTime(payments.endTime)
+      .build()
   }
 }

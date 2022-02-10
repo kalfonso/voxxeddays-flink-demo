@@ -1,4 +1,3 @@
-import flink_demo.Dependencies
 import com.diffplug.gradle.spotless.SpotlessExtension
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -31,20 +30,7 @@ subprojects {
     mavenCentral()
   }
 
-  val compileKotlin by tasks.getting(KotlinCompile::class) {
-    kotlinOptions {
-      jvmTarget = JavaVersion.VERSION_11.toString()
-    }
-    dependsOn("spotlessKotlinApply")
-  }
-
-  val compileTestKotlin by tasks.getting(KotlinCompile::class) {
-    kotlinOptions {
-      jvmTarget = JavaVersion.VERSION_11.toString()
-    }
-  }
-
-  tasks.withType<JavaCompile> {
+  tasks.withType<KotlinCompile> {
     sourceCompatibility = JavaVersion.VERSION_11.toString()
     targetCompatibility = JavaVersion.VERSION_11.toString()
   }
