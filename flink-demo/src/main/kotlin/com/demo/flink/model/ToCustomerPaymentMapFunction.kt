@@ -7,7 +7,7 @@ import org.apache.flink.api.common.functions.MapFunction
 class ToCustomerPaymentMapFunction: MapFunction<Payments.PaymentEvent, CustomerPayment> {
   override fun map(event: Payments.PaymentEvent): CustomerPayment {
     return CustomerPayment(
-      id = event.senderID,
+      senderID = event.senderID,
       amount = event.amount,
       createdAt = event.createdAt,
       location = findLocation(event.senderID)

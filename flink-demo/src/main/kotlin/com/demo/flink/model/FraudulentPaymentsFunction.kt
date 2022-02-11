@@ -14,7 +14,25 @@ class FraudulentPaymentsFunction(val maxCount: Long, val maxAmount: Long) :
     val updatedAmount = accumulator.amount + payment.amount
     val updatedCount = accumulator.count + 1
     val fraudulent = (updatedCount > maxCount) || (updatedAmount > maxAmount)
-    return accumulator.copy(amount = updatedAmount, count = updatedCount, fraudulent = fraudulent)
+    val startTime = if (accumulator.startTime == 0L) {
+      payment.createdAt
+    } else {
+      min(payment.createdAt, accumulator.startTime)
+    }
+    val endTime = if (accumulator.endTime == 0L) {
+      payment.createdAt
+    } else {
+      max(payment.createdAt, accumulator.endTime)
+    }
+    return CustomerPayments(
+      id = payment.senderID,
+      amount = updatedAmount,
+      count = updatedCount,
+      location = payment.location,
+      startTime = startTime,
+      endTime = endTime,
+      fraudulent = fraudulent
+    )
   }
 
   override fun getResult(accumulator: CustomerPayments): CustomerPayments {
