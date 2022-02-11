@@ -13,9 +13,9 @@ import kotlin.random.nextLong
 
 // Publishes random payments to Kafka for testing purposes.
 class LoadGenerator(private val latch: CountDownLatch) {
-  private val numPayments: Long = 10000
-  private val numCustomers: Long = 5
-  private val amountRange = LongRange(2000, 4000)
+  private val numPayments: Long = 100000
+  private val numCustomers: Long = 100
+  private val amountRange = LongRange(1, 4000)
 
   private val throughput: Int = -1
 
@@ -50,15 +50,17 @@ class LoadGenerator(private val latch: CountDownLatch) {
       .setSenderID("C_${Random.nextLong(0, numCustomers)}")
       .setReceiverID("C_${Random.nextLong(0, numCustomers)}")
       .setAmount(Random.nextLong(amountRange))
-      .setCreatedAt(Instant.now().toEpochMilli())
+      .setCreatedAt(randomDateBetween(
+        Instant.now().minus(1, ChronoUnit.HOURS),
+        Instant.now()
+      ))
       .build()
   }
 
   private fun randomDateBetween(startInclusive: Instant, endExclusive: Instant): Long {
-    val startSeconds: Long = startInclusive.epochSecond
-    val endSeconds: Long = endExclusive.epochSecond
-    val random: Long = Random.nextLong(startSeconds, endSeconds)
-    return Instant.ofEpochSecond(random).toEpochMilli()
+    val startMillis: Long = startInclusive.toEpochMilli()
+    val endMillis: Long = endExclusive.toEpochMilli()
+    return Random.nextLong(startMillis, endMillis)
   }
 
   private fun createPublisher(): PaymentEventPublisher {

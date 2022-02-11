@@ -1,4 +1,6 @@
 import flink_demo.Dependencies
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
   application
   id("kotlin")
@@ -27,6 +29,16 @@ dependencies {
 
 application {
   mainClass.set("com.demo.flink.FlinkAppKt")
+}
+
+tasks {
+  compileKotlin {
+    kotlinOptions {
+      // This is required to access static methods in Java interfaces. For instance:
+      // org.apache.flink.api.common.eventtime.WatermarkStrategy.forBoundedOutOfOrderness(...)
+      jvmTarget = "1.8"
+    }
+  }
 }
 
 

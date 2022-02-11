@@ -9,7 +9,7 @@ import com.demo.flink.model.ToCustomerPaymentMapFunction
 import com.demo.flink.serdes.FraudulentPaymentEventSerializationSchema
 import com.demo.flink.serdes.PaymentEventDeserializationSchema
 import com.twitter.chill.protobuf.ProtobufSerializer
-import org.apache.flink.streaming.api.TimeCharacteristic
+import org.apache.flink.api.common.eventtime.WatermarkStrategy.forBoundedOutOfOrderness
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.apache.flink.streaming.api.functions.sink.SinkFunction
 import org.apache.flink.streaming.api.functions.source.SourceFunction
@@ -17,6 +17,7 @@ import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindo
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer
+import java.time.Duration
 import java.util.Properties
 
 fun main() {
@@ -30,6 +31,10 @@ fun main() {
     props
   )
   source.setStartFromEarliest()
+  source.assignTimestampsAndWatermarks(
+    forBoundedOutOfOrderness<PaymentEvent>(Duration.ofMinutes(30))
+      .withTimestampAssigner { e, _ -> e.createdAt }
+  )
 
   val sinkTopic = "fraudulent_payment_events"
   val sink = FlinkKafkaProducer(
