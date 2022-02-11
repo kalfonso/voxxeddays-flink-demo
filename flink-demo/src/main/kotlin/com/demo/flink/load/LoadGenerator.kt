@@ -14,9 +14,8 @@ import kotlin.random.nextLong
 // Publishes random payments to Kafka for testing purposes.
 class LoadGenerator(private val latch: CountDownLatch) {
   private val numPayments: Long = 10000
-  private val numCustomers: Long = 10
-  private val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
-  private val amountRange = LongRange(1, 4000)
+  private val numCustomers: Long = 5
+  private val amountRange = LongRange(2000, 4000)
 
   private val throughput: Int = -1
 
@@ -48,23 +47,11 @@ class LoadGenerator(private val latch: CountDownLatch) {
 
   private fun randomPaymentEvent(): Payments.PaymentEvent {
     return Payments.PaymentEvent.newBuilder()
-      .setSenderID("S_${Random.nextLong(0, numCustomers)}")
-      .setReceiverID("R_${Random.nextLong(0, numCustomers)}")
+      .setSenderID("C_${Random.nextLong(0, numCustomers)}")
+      .setReceiverID("C_${Random.nextLong(0, numCustomers)}")
       .setAmount(Random.nextLong(amountRange))
-      .setCreatedAt(
-        randomDateBetween(
-          Instant.now().minus(3, ChronoUnit.HOURS),
-          Instant.now()
-        )
-      )
+      .setCreatedAt(Instant.now().toEpochMilli())
       .build()
-  }
-
-  private fun randomString(length: Int): String {
-    return (1..length)
-      .map { Random.nextInt(0, charPool.size) }
-      .map(charPool::get)
-      .joinToString("")
   }
 
   private fun randomDateBetween(startInclusive: Instant, endExclusive: Instant): Long {

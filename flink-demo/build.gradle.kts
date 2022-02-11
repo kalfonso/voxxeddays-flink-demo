@@ -15,6 +15,9 @@ dependencies {
   implementation(Dependencies.flinkConnectorBase)
   implementation(Dependencies.flinkCore)
   implementation(Dependencies.kafkaTools)
+  implementation(Dependencies.flinkProtobufSerializer) {
+    exclude(group = "com.esotericsoftware.cryo", module = "kryo")
+  }
 
   testImplementation(Dependencies.junitApi)
   testImplementation(Dependencies.assertk)
