@@ -4,7 +4,7 @@ import com.demo.flink.Payments
 import org.apache.flink.api.common.functions.MapFunction
 
 // Simulates enriching the event with location information
-class ToCustomerPaymentMapFunction: MapFunction<Payments.PaymentEvent, CustomerPayment> {
+class ToCustomerPaymentMapFunction : MapFunction<Payments.PaymentEvent, CustomerPayment> {
   override fun map(event: Payments.PaymentEvent): CustomerPayment {
     return CustomerPayment(
       senderID = event.senderID,

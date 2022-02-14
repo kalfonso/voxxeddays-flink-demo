@@ -12,6 +12,7 @@ buildscript {
     classpath(flink_demo.Dependencies.kotlinGradlePlugin)
     classpath(flink_demo.Dependencies.spotlessPlugin)
     classpath(flink_demo.Dependencies.protobufGradlePlugin)
+    classpath(flink_demo.Dependencies.shadowJarPlugin)
   }
 }
 

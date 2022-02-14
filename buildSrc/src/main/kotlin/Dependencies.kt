@@ -20,5 +20,8 @@ object Dependencies {
   val protobufJavaUtil = "com.google.protobuf:protobuf-java-util:3.17.3"
   val protoc = "com.google.protobuf:protoc:3.17.3"
   val kafkaTools = "org.apache.kafka:kafka-tools:2.8.0"
+  val shadowJarPlugin = "gradle.plugin.com.github.johnrengelman:shadow:7.1.0"
+  val slf4jApi = "org.slf4j:slf4j-api:1.7.32"
+  val slf4jLog4j12 = "org.slf4j:slf4j-log4j12:1.7.32"
 }
 

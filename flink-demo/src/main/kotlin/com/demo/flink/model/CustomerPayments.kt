@@ -1,6 +1,6 @@
 package com.demo.flink.model
 
-data class CustomerPayments (
+data class CustomerPayments(
   val id: String,
   val amount: Long,
   val count: Int,

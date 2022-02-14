@@ -43,11 +43,11 @@ fun main() {
     props,
     FlinkKafkaProducer.Semantic.EXACTLY_ONCE
   )
-  val app = FlinkExemplarApp(source, sink)
+  val app = FraudDetectionApp(source, sink)
   app.execute()
 }
 
-class FlinkExemplarApp(
+class FraudDetectionApp(
   private val source: SourceFunction<PaymentEvent>,
   private val sink: SinkFunction<FraudulentPaymentEvent>
 ) {
