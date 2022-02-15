@@ -28,7 +28,7 @@ changes on how the streaming application detects fraudulent payments.
 `./scripts/setup_topics.sh`
 
 ## Run Flink app
-`./scripts/run_fraund_detection.sh`
+`./scripts/run_fraud_detection.sh`
 
 ## Simulate payment traffic
 `./scripts/run_load.sh`
