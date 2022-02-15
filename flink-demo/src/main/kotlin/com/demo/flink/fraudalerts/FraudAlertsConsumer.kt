@@ -1,6 +1,5 @@
 package com.demo.flink.fraudalerts
 
-import com.demo.flink.FraudulentPayments.FraudulentPaymentEvent
 import org.apache.kafka.clients.consumer.CommitFailedException
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.StringDeserializer
