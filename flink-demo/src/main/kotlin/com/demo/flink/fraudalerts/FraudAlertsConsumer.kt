@@ -1,7 +1,6 @@
 package com.demo.flink.fraudalerts
 
 import org.apache.kafka.clients.consumer.CommitFailedException
-import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.slf4j.LoggerFactory
@@ -58,10 +57,9 @@ private val logger = LoggerFactory.getLogger(FraudAlertsConsumer::class.java)
 fun main(args: Array<String>) {
   val topic = "fraudulent_payment_events"
   val properties = Properties()
-  // Generate a unique consumer group so the consumer always starts from the earliest offset
-  properties.put(ConsumerConfig.GROUP_ID_CONFIG, UUID.randomUUID().toString())
   properties["bootstrap.servers"] = "localhost:9092"
-  properties["group.id"] = "fraudConsumer"
+  // Generate a unique consumer group so the consumer always starts from the earliest offset
+  properties["group.id"] = UUID.randomUUID().toString()
   properties["auto.offset.reset"] = "earliest"
   val consumer = FraudAlertsConsumer(topic, properties)
 
