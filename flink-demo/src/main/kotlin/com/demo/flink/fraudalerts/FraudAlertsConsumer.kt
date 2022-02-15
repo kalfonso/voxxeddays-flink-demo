@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.time.Instant
 import java.util.Properties
+import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
 
 // FraudAlersConsumer consumes fraudulent payment events.
@@ -57,7 +58,8 @@ fun main(args: Array<String>) {
   val topic = "fraudulent_payment_events"
   val properties = Properties()
   properties["bootstrap.servers"] = "localhost:9092"
-  properties["group.id"] = "fraudConsumer"
+  // Generate a unique consumer group so the consumer always starts from the earliest offset
+  properties["group.id"] = UUID.randomUUID().toString()
   properties["auto.offset.reset"] = "earliest"
   val consumer = FraudAlertsConsumer(topic, properties)
 
