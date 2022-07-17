@@ -1,14 +1,16 @@
+import com.google.protobuf.gradle.protobuf
+import com.google.protobuf.gradle.protoc
 import flink_demo.Dependencies
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   application
   id("kotlin")
+  id("com.google.protobuf")
   id("com.github.johnrengelman.shadow")
 }
 
 dependencies {
-  implementation(project(":protos"))
+  implementation(Dependencies.protobufJava)
   implementation(Dependencies.protobufJavaUtil)
   // implementation(Dependencies.flinkJava)
   // implementation(Dependencies.flinkStreamingJava)
@@ -34,12 +36,31 @@ application {
   mainClass.set("com.demo.flink.FraudDetectionAppKt")
 }
 
+java {
+  sourceCompatibility = JavaVersion.VERSION_11
+  targetCompatibility = JavaVersion.VERSION_11
+}
+
+sourceSets {
+  main {
+    java {
+      srcDirs("build/generated/source/proto/main/java")
+    }
+  }
+}
+
+protobuf {
+  protoc {
+    artifact = flink_demo.Dependencies.protoc
+  }
+}
+
 tasks {
   compileKotlin {
     kotlinOptions {
       // This is required to access static methods in Java interfaces. For instance:
       // org.apache.flink.api.common.eventtime.WatermarkStrategy.forBoundedOutOfOrderness(...)
-      jvmTarget = "1.8"
+      jvmTarget = "11"
     }
   }
 }
